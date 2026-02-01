@@ -15,7 +15,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Domus",
+  title: "SAAS",
 };
 
 export default function RootLayout({
