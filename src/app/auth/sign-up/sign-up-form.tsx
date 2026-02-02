@@ -29,7 +29,7 @@ import { z } from "zod";
 import { SignUpFormValues, signUpSchema } from "./sign-up-form-schema";
 
 export function SignUpForm() {
-  const { push } = useRouter();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -42,16 +42,27 @@ export function SignUpForm() {
   });
 
   const { mutateAsync: signUp, isPending: isPendingSignUp } = useSignUp();
-  const { mutateAsync: signInWithGoogle, isPending: isPendingSignInWithGoogle } = useSignInWithGoogle();
-  
+  const {
+    mutateAsync: signInWithGoogle,
+    isPending: isPendingSignInWithGoogle,
+  } = useSignInWithGoogle();
+
   const isLoading = isPendingSignUp || isPendingSignInWithGoogle;
 
   const onSubmit = async (values: SignUpFormValues) => {
     try {
       await signUp(values);
-      push("/dashboard");
-    } catch (error) {}
+      router.push("/");
+    } catch {}
   };
+
+  const onGoogle = async () => {
+    try {
+      await signInWithGoogle();
+      router.push("/");
+    } catch {}
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm">
@@ -160,7 +171,7 @@ export function SignUpForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => signInWithGoogle()}
+              onClick={() => onGoogle()}
               disabled={isLoading}
               className="w-full"
             >
@@ -180,18 +191,17 @@ export function SignUpForm() {
             </div>
 
             <Button
-              asChild
+              type="button"
               variant="outline"
+              onClick={() => router.push("/auth/sign-in")}
               disabled={isLoading}
               className="w-full"
             >
-              <NextLink href="/auth/sign-in">
-                {isLoading ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  "Entrar"
-                )}
-              </NextLink>
+              {isLoading ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Entrar"
+              )}
             </Button>
           </CardContent>
         </Card>

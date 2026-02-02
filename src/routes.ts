@@ -7,9 +7,8 @@ export const publicRoutes = [
 
 export const protectedRoutes = [
   "/",
-  "/finances",
-  "/finances/categories",
-  "/finances/transactions",
+  "/categories",
+  "/transactions",
   "/profile",
 ];
 

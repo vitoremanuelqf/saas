@@ -18,39 +18,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useSignIn } from "@/hooks/auth/use-sign-in";
+import { useResetPassword } from "@/hooks/auth/use-reset-password";
 import { useSignInWithGoogle } from "@/hooks/auth/use-sign-with-google";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SignInFormValues, signInSchema } from "./sign-in-form-schema";
+import {
+  ResetPasswordFormValues,
+  resetPasswordSchema,
+} from "./reset-password-form-schema";
 
-export function SignInForm() {
+export function ResetPasswordForm() {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const { mutateAsync: signIn, isPending: isPendingSignIn } = useSignIn();
+  const { mutateAsync: resetPassword, isPending: isPendingResetPassword } =
+    useResetPassword();
   const {
     mutateAsync: signInWithGoogle,
     isPending: isPendingSignInWithGoogle,
   } = useSignInWithGoogle();
 
-  const isLoading = isPendingSignIn || isPendingSignInWithGoogle;
+  const isLoading = isPendingResetPassword || isPendingSignInWithGoogle;
 
-  const onSubmit = async (values: SignInFormValues) => {
+  const onSubmit = async (values: ResetPasswordFormValues) => {
     try {
-      await signIn(values);
-      router.push("/");
+      await resetPassword(values);
+      router.push("/auth/sign-in");
     } catch {}
   };
 
@@ -66,9 +68,9 @@ export function SignInForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm">
         <Card className="rounded-none sm:rounded">
           <CardHeader>
-            <CardTitle>Acessar conta:</CardTitle>
+            <CardTitle>Recuperar senha:</CardTitle>
             <CardDescription>
-              Entre com suas credenciais para acessar sua conta.
+              Digite seu e-mail para receber o link de redefinição de senha.
             </CardDescription>
           </CardHeader>
 
@@ -91,36 +93,15 @@ export function SignInForm() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha:</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Informe sua senha:"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <NextLink
-              href="/auth/reset-password"
-              className="ml-auto text-sm text-muted-foreground"
-            >
-              Esqueceu sua senha?
-            </NextLink>
+            <p className="text-xs text-muted-foreground">
+              Um email de redefinição será enviado.
+            </p>
 
             <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                "Entrar"
+                "Recuperar senha"
               )}
             </Button>
 
@@ -143,28 +124,6 @@ export function SignInForm() {
                 <Loader2 className="size-4 animate-spin" />
               ) : (
                 "Google"
-              )}
-            </Button>
-
-            <div className="w-full flex items-center gap-2">
-              <Separator className="shrink" />
-              <span className="min-w-fit text-xs text-muted-foreground">
-                Não tem uma conta?
-              </span>
-              <Separator className="shrink" />
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/auth/sign-up")}
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                "Criar conta"
               )}
             </Button>
           </CardContent>
