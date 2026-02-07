@@ -2,18 +2,18 @@
 
 import { cn } from "@/lib/utils";
 import NextLink from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 type Props = {
   href: string;
-  segment?: string | null;
   children: React.ReactNode;
+  exact?: boolean; // opcional
 };
 
-export function NavLink({ href, segment = null, children }: Props) {
-  const activeSegment = useSelectedLayoutSegment();
+export function HeaderNavLink({ href, exact = true, children }: Props) {
+  const pathname = usePathname();
 
-  const isActive = activeSegment === segment;
+  const isActive = exact ? pathname === href : pathname.startsWith(href);
 
   return (
     <NextLink
@@ -29,7 +29,3 @@ export function NavLink({ href, segment = null, children }: Props) {
     </NextLink>
   );
 }
-
-// border-b-2 border-transparent pb-1 text-sm font-medium text-muted-foreground transition hover:text-foreground
-//  <NextLink href="/" className="hover:text-foreground transition">
-//         </NextLink>
