@@ -3,7 +3,7 @@ import { userKeys } from "@/queries/user-keys";
 import { updateUser } from "@/services/user/update-user";
 import { IUser } from "@/types/user";
 import { useQueryClient } from "@tanstack/react-query";
-import { serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 type UpdateUserVariables = {
   uid: string;
@@ -21,10 +21,12 @@ export const useUpdateUser = () => {
           ? {
               ...old,
               ...data,
-              updatedAt: serverTimestamp(),
+              updatedAt: Timestamp.now(),
             }
           : old,
       );
+
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 };
