@@ -4,8 +4,8 @@ type Props = {
 
 export function Main({ children }: Props) {
   return (
-    <main className="w-full h-auto p-4">
-      <div className="mx-auto w-full h-auto max-w-7xl flex items-center justify-between">
+    <main className="w-full h-auto px-4 py-8">
+      <div className="mx-auto w-full h-auto max-w-7xl flex flex-col gap-4">
         {children}
       </div>
     </main>
